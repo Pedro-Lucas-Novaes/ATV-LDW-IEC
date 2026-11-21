@@ -1,4 +1,46 @@
-# Task Tracker API --- LDW
+# Task Tracker — LDW
+
+## AT2 — Frontend do Task Tracker
+
+O frontend em `app/` usa React, TypeScript, Vite, React Router, Tailwind CSS e componentes shadcn/ui. Ele consome a API da AT1 para cadastrar contas, entrar e gerenciar projetos e tarefas. Cada tarefa pertence a um projeto e tem status e prioridade. As rotas do painel usam a sessão JWT da API.
+
+### Como executar
+
+Use Node.js 24, pnpm 11.20.0 ou outra versão compatível da série 11 e Docker Desktop. Os comandos abaixo usam o PowerShell no Windows.
+
+**1. Suba o PostgreSQL.** Na raiz do repositório, execute:
+
+```powershell
+docker compose up -d db
+docker compose exec db pg_isready -U postgres
+```
+
+Se o banco ainda estiver iniciando, aguarde alguns segundos e repita o segundo comando. Prossiga quando aparecer `accepting connections`.
+
+**2. Inicie a API.** No mesmo terminal, a partir da raiz do repositório:
+
+```powershell
+cd backend
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+pnpm install
+pnpm exec sequelize-cli db:migrate
+pnpm dev
+```
+
+As migrations criam as tabelas de usuários, projetos e tarefas. Confira se a [API está ativa](http://localhost:3000/api/health) e veja a [documentação no Swagger](http://localhost:3000/api/docs).
+
+**3. Inicie o frontend.** Deixe a API rodando e abra um segundo terminal na raiz do repositório:
+
+```powershell
+cd app
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+pnpm install --no-frozen-lockfile
+pnpm dev
+```
+
+Abra o [Task Tracker](http://localhost:5173). Para verificar o frontend, execute `pnpm lint` e `pnpm build` dentro de `app/`.
+
+## AT1 — API do Task Tracker
 
 API REST desenvolvida em **Node.js**, **Express**, **TypeScript**,
 **Sequelize** e **PostgreSQL** para gerenciamento de usuários, projetos
@@ -41,7 +83,19 @@ A API permite:
 ## Estrutura principal
 
 ```text
-LDW-ATV1/
+ATV-LDW-IEC/
+├── app/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── lib/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   └── types/
+│   ├── .env.example
+│   ├── components.json
+│   └── package.json
 ├── backend/
 │   ├── src/
 │   │   ├── config/
@@ -61,31 +115,11 @@ LDW-ATV1/
 └── package.json
 ```
 
-## Pré-requisitos
+## Variáveis de ambiente
 
-Para executar o projeto, tenha instalado:
+Os arquivos `.env.example` de `backend/` e `app/` são modelos para os respectivos arquivos `.env`. Versione os modelos e mantenha os arquivos `.env` locais.
 
-- Node.js;
-- pnpm;
-- Docker Desktop / Docker Compose;
-- Git.
-
-O backend foi configurado para utilizar **pnpm 11.20.0 ou versão
-compatível com `^11.20.0`**.
-
-## Configuração das variáveis de ambiente
-
-Entre na pasta `backend` e crie o arquivo `.env` com base no
-`.env.example`.
-
-No Windows CMD:
-
-```bat
-cd backend
-copy .env.example .env
-```
-
-Exemplo de configuração para desenvolvimento local:
+Para executar a API no computador e o PostgreSQL no Docker, use os valores de desenvolvimento de `backend/.env.example`:
 
 ```env
 PORT=3000
@@ -101,90 +135,7 @@ DB_SSL=false
 JWT_SECRET=troque_por_uma_chave_secreta
 ```
 
-> O arquivo `.env` não deve ser versionado. O `.env.example` serve
-> apenas como modelo de configuração.
-
-## Instalação
-
-Na raiz do projeto:
-
-```bat
-pnpm install
-```
-
-Depois instale as dependências do backend:
-
-```bat
-cd backend
-pnpm install
-```
-
-## Banco de dados com Docker
-
-Na raiz do projeto, inicie os serviços:
-
-```bat
-pnpm run compose:up
-```
-
-Para visualizar os logs:
-
-```bat
-pnpm run compose:logs
-```
-
-Para encerrar os containers:
-
-```bat
-pnpm run compose:down
-```
-
-O PostgreSQL local utiliza, por padrão:
-
-```text
-Host: 127.0.0.1
-Porta: 5432
-Banco: postgres
-Usuário: postgres
-Senha: postgres
-```
-
-## Migrations
-
-Com o PostgreSQL em execução, entre na pasta `backend` e execute:
-
-```bat
-pnpm exec sequelize-cli db:migrate
-```
-
-As migrations criam as tabelas necessárias da aplicação, incluindo
-usuários, projetos e tarefas.
-
-## Executando o backend em desenvolvimento
-
-Dentro de `backend`:
-
-```bat
-pnpm dev
-```
-
-A API ficará disponível em:
-
-```text
-http://localhost:3000/api
-```
-
-Health Check:
-
-```text
-http://localhost:3000/api/health
-```
-
-Documentação Swagger:
-
-```text
-http://localhost:3000/api/docs
-```
+O `app/.env.example` define `VITE_API_URL=http://localhost:3000`. Se a API estiver em outro endereço, informe a origem em `app/.env`, como `http://localhost:3001`, e reinicie o Vite. O frontend acrescenta `/api` ao endereço.
 
 ## Autenticação
 
@@ -210,29 +161,26 @@ token. O Swagger adicionará o esquema Bearer à requisição.
 
 ## Principais endpoints
 
-Método Endpoint Descrição
+| Método | Endpoint | Descrição |
+| --- | --- | --- |
+| POST | `/api/auth/login` | Realiza login e retorna o token JWT. |
+| POST | `/api/users` | Cadastra um usuário. |
+| GET | `/api/users` | Lista usuários. |
+| GET | `/api/users/{id}` | Consulta um usuário. |
+| PUT | `/api/users/{id}` | Atualiza um usuário. |
+| DELETE | `/api/users/{id}` | Exclui um usuário. |
+| GET | `/api/projects` | Lista os projetos do usuário autenticado. |
+| POST | `/api/projects` | Cria um projeto. |
+| GET | `/api/projects/{id}` | Consulta um projeto. |
+| PUT | `/api/projects/{id}` | Atualiza um projeto. |
+| DELETE | `/api/projects/{id}` | Exclui um projeto. |
+| GET | `/api/tasks` | Lista as tarefas dos projetos do usuário autenticado. |
+| POST | `/api/tasks` | Cria uma tarefa em um projeto. |
+| GET | `/api/tasks/{id}` | Consulta uma tarefa. |
+| PUT | `/api/tasks/{id}` | Atualiza uma tarefa. |
+| DELETE | `/api/tasks/{id}` | Exclui uma tarefa. |
 
----
-
-POST `/api/auth/login` Realiza login
-GET `/api/users` Lista usuários
-POST `/api/users` Cadastra usuário
-GET `/api/users/{id}` Busca usuário
-PUT `/api/users/{id}` Atualiza usuário
-DELETE `/api/users/{id}` Exclui usuário
-GET `/api/projects` Lista projetos do usuário autenticado
-POST `/api/projects` Cria projeto
-GET `/api/projects/{id}` Busca projeto
-PUT `/api/projects/{id}` Atualiza projeto
-DELETE `/api/projects/{id}` Exclui projeto
-GET `/api/tasks` Lista tarefas
-POST `/api/tasks` Cria tarefa
-GET `/api/tasks/{id}` Busca tarefa
-PUT `/api/tasks/{id}` Atualiza tarefa
-DELETE `/api/tasks/{id}` Exclui tarefa
-
-Para exemplos completos de Request Body, respostas e códigos HTTP,
-utilize a documentação Swagger em `/api/docs`.
+Para ver exemplos de corpos de requisição, respostas e códigos HTTP, consulte o [Swagger](http://localhost:3000/api/docs).
 
 ## Scripts do backend
 
@@ -241,7 +189,6 @@ Dentro da pasta `backend`:
 ```bat
 pnpm dev
 pnpm build
-pnpm start
 pnpm type-check
 pnpm lint
 pnpm lint:fix
@@ -279,28 +226,15 @@ Executar uma única vez:
 pnpm test:run
 ```
 
-## Build e execução em produção
+## Scripts do Docker
 
-Dentro de `backend`:
+Na raiz do projeto, `pnpm run docker:build-api` constrói a imagem do backend. O comando `pnpm run compose:up` sobe o PostgreSQL e a API em contêineres. Use esse modo quando o backend local estiver desligado, pois ambos usam a porta `3000`.
 
-```bat
-pnpm build
-pnpm start
-```
-
-O comando `build` compila o TypeScript para JavaScript e o comando
-`start` executa `dist/server.js`.
-
-## Docker
-
-Na raiz do projeto também estão disponíveis os scripts:
-
-```bat
-pnpm run docker:build-api
-pnpm run compose:up
-pnpm run compose:down
-pnpm run compose:logs
-```
+| Comando | Ação |
+| --- | --- |
+| `docker compose logs -f db` | Acompanha os logs do PostgreSQL. |
+| `pnpm run compose:logs` | Acompanha os logs dos serviços do Compose. |
+| `pnpm run compose:down` | Encerra os serviços do Compose. |
 
 ## Documentação da API
 
