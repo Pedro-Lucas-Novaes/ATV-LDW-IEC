@@ -5,8 +5,14 @@ import { User } from '../models/User';
 export class UserController {
   // GET /api/users
   public static async index(req: Request, res: Response): Promise<Response> {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ erro: 'Usuário não autenticado.' });
+    }
+
     try {
       const users = await User.findAll({
+        where: { id: userId },
         attributes: ['id', 'nome', 'email', 'createdAt', 'updatedAt'],
       });
 

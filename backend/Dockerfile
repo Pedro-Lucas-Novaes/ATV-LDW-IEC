@@ -1,31 +1,30 @@
-# 1. Define a imagem de origem base 
-FROM node:24-alpine
-
-# Configura o diretório global do pnpm
-ENV PNPM_HOME="/root/.local/share/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
-# 2. Define diretório de trabalho interno do container
+FROM node:24-alpine AS base
 WORKDIR /app
+RUN npm install --global pnpm@11.21.0
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# 3. Instalar o pnpm globalmente para gerenciar as dependências
-RUN npm install -g pnpm
-
-# Desativa a restrição do pnpm 11
-RUN pnpm config set strict-dep-builds false
-
-# 4. Copia apenas o manifesto de dependências
-COPY package.json ./
-
-# 5. Instalar as dependências do projeto
-RUN pnpm install
-
-# 6. Copiat todo os restante do código
+FROM base AS development
+RUN pnpm install --frozen-lockfile
 COPY . .
-
-# 7. Expoe a porta padrão LDW
 EXPOSE 3000
-
-# 8. Comando para inicializar a aplicação
 CMD ["pnpm", "dev"]
 
+FROM development AS build
+RUN pnpm run build
+
+FROM base AS production-dependencies
+RUN pnpm install --prod --frozen-lockfile
+
+FROM node:24-alpine AS production
+ENV NODE_ENV=production
+WORKDIR /app
+
+COPY --from=production-dependencies --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/dist ./dist
+COPY --chown=node:node .sequelizerc ./
+COPY --chown=node:node src/config/config.cjs ./src/config/config.cjs
+COPY --chown=node:node src/migrations ./src/migrations
+
+USER node
+EXPOSE 3000
+CMD ["sh", "-c", "node ./node_modules/sequelize-cli/lib/sequelize db:migrate --env production && exec node dist/server.js"]

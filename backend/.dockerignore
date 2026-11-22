@@ -13,6 +13,9 @@ npm-debug.log*
 pnpm-debug.log*
 
 coverage
+**/*.test.*
+**/*.spec.*
+vitest.config.ts
 .tmp
 temp
 tmp

@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/api",
-      "description": "Servidor Local de Desenvolvimento"
+      "url": "/api",
+      "description": "Mesmo servidor do Swagger"
     }
   ],
   "tags": [
@@ -30,6 +30,27 @@
     }
   ],
   "paths": {
+    "/health": {
+      "get": {
+        "summary": "Verificar se a API está em execução",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "API ativa",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "OK",
+                  "mensagem": "Servidor Backend rodando com sucesso.",
+                  "uptime": 120,
+                  "timestamp": "2026-11-22T12:00:00.000Z"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/login": {
       "post": {
         "summary": "Realizar login",
@@ -104,7 +125,7 @@
     },
     "/users": {
       "get": {
-        "summary": "Listar todos os usuarios",
+        "summary": "Listar a própria conta",
         "tags": ["Users"],
         "responses": {
           "200": {
@@ -226,7 +247,7 @@
     },
     "/users/{id}": {
       "get": {
-        "summary": "Buscar usuario por ID",
+        "summary": "Consultar a própria conta por ID",
         "tags": ["Users"],
         "parameters": [
           {
@@ -304,7 +325,7 @@
         ]
       },
       "put": {
-        "summary": "Atualizar dados de um usuario",
+        "summary": "Atualizar os dados da própria conta",
         "tags": ["Users"],
         "parameters": [
           {
@@ -405,7 +426,7 @@
         ]
       },
       "delete": {
-        "summary": "Remover usuario por ID",
+        "summary": "Excluir a própria conta por ID",
         "tags": ["Users"],
         "parameters": [
           {
