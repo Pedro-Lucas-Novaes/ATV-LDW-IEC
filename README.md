@@ -2,7 +2,7 @@
 
 ## AT2 — Frontend do Task Tracker
 
-O frontend em `app/` usa React, TypeScript, Vite, React Router, Tailwind CSS e componentes shadcn/ui. Ele consome a API da AT1 para cadastrar contas, entrar e gerenciar projetos e tarefas. Cada tarefa pertence a um projeto e tem status e prioridade. As rotas do painel usam a sessão JWT da API..
+O frontend em `app/` usa React, TypeScript, Vite, React Router, Tailwind CSS e componentes shadcn/ui. Ele consome a API da AT1 para cadastrar contas, entrar e gerenciar projetos e tarefas. Cada tarefa pertence a um projeto e tem status e prioridade. As rotas do painel usam a sessão JWT da API.
 
 ### Como executar
 

@@ -20,7 +20,7 @@ app.use(express.json());
 app.get('/api/health', (_req: Request, res: Response) => {
   res.status(200).json({
     status: 'OK',
-    mensagem: 'Servidor Backend rodando com sucesso.',
+    mensagem: 'iec-at2.',
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
   });
