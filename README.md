@@ -2,7 +2,7 @@
 
 ## AT2 — Frontend do Task Tracker
 
-O frontend em `app/` usa React, TypeScript, Vite, React Router, Tailwind CSS e componentes shadcn/ui. Ele consome a API da AT1 para cadastrar contas, entrar e gerenciar projetos e tarefas. Cada tarefa pertence a um projeto e tem status e prioridade. As rotas do painel usam a sessão JWT da API.
+O frontend em `app/` usa React, TypeScript, Vite, React Router, Tailwind CSS e componentes shadcn/ui. Ele consome a API da AT1 para cadastrar contas, entrar e gerenciar projetos e tarefas. Cada tarefa pertence a um projeto e tem status e prioridade. As rotas do painel usam a sessão JWT da API..
 
 ### Como executar
 
@@ -40,7 +40,6 @@ pnpm dev
 
 Abra o [Task Tracker](http://localhost:5173). Para verificar o frontend, execute `pnpm lint` e `pnpm build` dentro de `app/`.
 
-
 ## AT2 de IEC — Entrega contínua do backend
 
 O workflow [CI/CD do Task Tracker](.github/workflows/integracao-continua.yml) roda lint, formatação, checagem de tipos e testes. Depois, compila o backend e constrói a imagem de produção. Em um push para `main`, o último job envia um POST ao Render com o SHA do commit que passou nas verificações. Pull requests e execuções manuais validam o código e a imagem.
@@ -52,16 +51,16 @@ O workflow [CI/CD do Task Tracker](.github/workflows/integracao-continua.yml) ro
 3. Configure **Auto-Deploy** como **Off** e **Health Check Path** como `/api/health`. O processo escuta a porta fornecida pelo Render na variável `PORT`.
 4. No painel de variáveis do serviço, configure:
 
-| Variável | Valor |
-| --- | --- |
-| `NODE_ENV` | `production` |
-| `DB_HOST` | Host interno do PostgreSQL |
-| `DB_PORT` | `5432` |
-| `DB_NAME` | Nome do banco definido no Render |
-| `DB_USER` | Usuário do banco |
-| `DB_PASSWORD` | Senha do banco |
-| `DB_SSL` | `true` para exigir TLS |
-| `JWT_SECRET` | Chave aleatória com pelo menos 32 caracteres |
+| Variável      | Valor                                        |
+| ------------- | -------------------------------------------- |
+| `NODE_ENV`    | `production`                                 |
+| `DB_HOST`     | Host interno do PostgreSQL                   |
+| `DB_PORT`     | `5432`                                       |
+| `DB_NAME`     | Nome do banco definido no Render             |
+| `DB_USER`     | Usuário do banco                             |
+| `DB_PASSWORD` | Senha do banco                               |
+| `DB_SSL`      | `true` para exigir TLS                       |
+| `JWT_SECRET`  | Chave aleatória com pelo menos 32 caracteres |
 
 A imagem executa as migrations no início, antes de subir a API. No PostgreSQL interno do Render, o TLS usa um certificado autoassinado.
 
@@ -197,24 +196,24 @@ token. O Swagger adicionará o esquema Bearer à requisição.
 
 ## Principais endpoints
 
-| Método | Endpoint | Descrição |
-| --- | --- | --- |
-| POST | `/api/auth/login` | Realiza login e retorna o token JWT. |
-| POST | `/api/users` | Cadastra um usuário. |
-| GET | `/api/users` | Retorna a conta autenticada em uma lista. |
-| GET | `/api/users/{id}` | Consulta a própria conta. |
-| PUT | `/api/users/{id}` | Atualiza a própria conta. |
-| DELETE | `/api/users/{id}` | Exclui a própria conta. |
-| GET | `/api/projects` | Lista os projetos do usuário autenticado. |
-| POST | `/api/projects` | Cria um projeto. |
-| GET | `/api/projects/{id}` | Consulta um projeto. |
-| PUT | `/api/projects/{id}` | Atualiza um projeto. |
-| DELETE | `/api/projects/{id}` | Exclui um projeto. |
-| GET | `/api/tasks` | Lista as tarefas dos projetos do usuário autenticado. |
-| POST | `/api/tasks` | Cria uma tarefa em um projeto. |
-| GET | `/api/tasks/{id}` | Consulta uma tarefa. |
-| PUT | `/api/tasks/{id}` | Atualiza uma tarefa. |
-| DELETE | `/api/tasks/{id}` | Exclui uma tarefa. |
+| Método | Endpoint             | Descrição                                             |
+| ------ | -------------------- | ----------------------------------------------------- |
+| POST   | `/api/auth/login`    | Realiza login e retorna o token JWT.                  |
+| POST   | `/api/users`         | Cadastra um usuário.                                  |
+| GET    | `/api/users`         | Retorna a conta autenticada em uma lista.             |
+| GET    | `/api/users/{id}`    | Consulta a própria conta.                             |
+| PUT    | `/api/users/{id}`    | Atualiza a própria conta.                             |
+| DELETE | `/api/users/{id}`    | Exclui a própria conta.                               |
+| GET    | `/api/projects`      | Lista os projetos do usuário autenticado.             |
+| POST   | `/api/projects`      | Cria um projeto.                                      |
+| GET    | `/api/projects/{id}` | Consulta um projeto.                                  |
+| PUT    | `/api/projects/{id}` | Atualiza um projeto.                                  |
+| DELETE | `/api/projects/{id}` | Exclui um projeto.                                    |
+| GET    | `/api/tasks`         | Lista as tarefas dos projetos do usuário autenticado. |
+| POST   | `/api/tasks`         | Cria uma tarefa em um projeto.                        |
+| GET    | `/api/tasks/{id}`    | Consulta uma tarefa.                                  |
+| PUT    | `/api/tasks/{id}`    | Atualiza uma tarefa.                                  |
+| DELETE | `/api/tasks/{id}`    | Exclui uma tarefa.                                    |
 
 Para ver exemplos de corpos de requisição, respostas e códigos HTTP, consulte o [Swagger](http://localhost:3000/api/docs).
 
@@ -266,11 +265,11 @@ pnpm test:run
 
 Na raiz do projeto, `pnpm run docker:build-api` constrói a imagem do backend. O comando `pnpm run compose:up` sobe o PostgreSQL e a API em contêineres. Use esse modo quando o backend local estiver desligado, pois ambos usam a porta `3000`.
 
-| Comando | Ação |
-| --- | --- |
-| `docker compose logs -f db` | Acompanha os logs do PostgreSQL. |
-| `pnpm run compose:logs` | Acompanha os logs dos serviços do Compose. |
-| `pnpm run compose:down` | Encerra os serviços do Compose. |
+| Comando                     | Ação                                       |
+| --------------------------- | ------------------------------------------ |
+| `docker compose logs -f db` | Acompanha os logs do PostgreSQL.           |
+| `pnpm run compose:logs`     | Acompanha os logs dos serviços do Compose. |
+| `pnpm run compose:down`     | Encerra os serviços do Compose.            |
 
 ## Documentação da API
 
